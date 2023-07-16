@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Planeta con Anillo Giratorio - Three.js</title>
+  <style>
+    body { margin: 0; }
+    #sceneContainer { width: 100vw; height: 100vh; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <!-- Contenedor para la escena Three.js -->
+  <div id="sceneContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Variables globales
+    let scene, camera, renderer, planet, ring;
+
+    // Función de inicialización
+    function init() {
+      // Crear la escena
+      scene = new THREE.Scene();
+
+      // Crear la cámara
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 20);
+
+      // Crear el renderizador
+      renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('sceneContainer').appendChild(renderer.domElement);
+
+      // Agregar una luz direccional (luz del sol)
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      // Crear una esfera que representa el planeta
+      const planetGeometry = new THREE.SphereGeometry(10, 128, 128);
+      const planetMaterial = new THREE.MeshPhongMaterial({
+        color: 0x336699, // Color del planeta (azul oscuro)
+        specular: 0x050505, // Color especular
+        shininess: 100 // Brillo especular
+      });
+      planet = new THREE.Mesh(planetGeometry, planetMaterial);
+      scene.add(planet);
+
+      // Crear el anillo del planeta (un cilindro)
+      const ringGeometry = new THREE.CylinderGeometry(16, 16, 2, 64);
+      const ringMaterial = new THREE.MeshPhongMaterial({
+        color: 0xCCCCCC, // Color del anillo (gris claro)
+        side: THREE.DoubleSide
+      });
+      ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring.rotation.x = Math.PI / 4; // Inclinar el anillo ligeramente
+      planet.add(ring); // Agregar el anillo como hijo del planeta
+
+      // Renderizar la escena inicialmente
+      renderer.render(scene, camera);
+
+      // Iniciar la animación del planeta y el anillo
+      animatePlanet();
+    }
+
+    // Función para animar el planeta y el anillo
+    function animatePlanet() {
+      // Realizar la animación aquí (rota o cambia la forma)
+      planet.rotation.y += 0.005; // Rotación del planeta en el eje Y
+      ring.rotation.y += 0.01; // Rotación del anillo en el eje Y (más rápida)
+
+      // Renderizar la escena en cada frame
+      renderer.render(scene, camera);
+
+      // Repetir la animación en el próximo frame
+      requestAnimationFrame(animatePlanet);
+    }
+
+    // Ejecutar la función de inicialización al cargar la página
+    init();
+  </script>
+</body>
+</html>
